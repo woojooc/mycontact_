@@ -23,6 +23,22 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //junit
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+
+    //JPA 의존성 추가 - DB 상관없이 알아서 처리해줌
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.3'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //DB- 테스트용 메모리 EB
+    implementation 'com.h2database:h2'
+
+    compileOnly 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 }
 
 test {
