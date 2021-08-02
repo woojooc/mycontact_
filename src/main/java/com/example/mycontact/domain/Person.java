@@ -1,10 +1,10 @@
 package com.example.mycontact.domain;
 
+import com.example.mycontact.domain.dto.Birthday;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @Entity
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class Person {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull    // 반드시 있어야함.
@@ -35,7 +35,9 @@ public class Person {
 
     private String address;
 
-    private LocalDate birthday;
+    @Valid
+    @Embedded
+    private Birthday birthday;
 
     private String job;
 
@@ -72,6 +74,10 @@ public class Person {
     */
 
     //차단기능
-    private boolean block;  // getter에서 isBlock이라고 만들어줌
+    //private boolean block;  // getter에서 isBlock이라고 만들어줌
 
+    //optional false = 항상 필요
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)// fetch = FetchType.EAGER)//, optional = false)
+    @ToString.Exclude
+    private Block block;
 }
