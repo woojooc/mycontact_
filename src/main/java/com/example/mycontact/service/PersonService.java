@@ -1,11 +1,14 @@
 package com.example.mycontact.service;
 
 
+import com.example.mycontact.controller.dto.PersonDto;
 import com.example.mycontact.domain.Block;
 import com.example.mycontact.domain.Person;
+import com.example.mycontact.domain.dto.Birthday;
 import com.example.mycontact.repository.BlockRepository;
 import com.example.mycontact.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,18 +76,39 @@ public class PersonService {
     }
 
     @Transactional
-    public void modify(Long id, Person person) {
-        Person personAtDb = personRepository.findById(id).orElseThrow(()->new RuntimeException("아이디가 존재하지 않습니다."));
+    public void modify(Long id, PersonDto personDto) {
+        Person person = personRepository.findById(id).orElseThrow(()->new RuntimeException("아이디가 존재하지 않습니다."));
 
-        personAtDb.setName(person.getName());
-        personAtDb.setPhoneNumber(person.getPhoneNumber());
-        personAtDb.setJob(person.getJob());
-        personAtDb.setBirthday(person.getBirthday());
-        personAtDb.setAddress(person.getAddress());
-        personAtDb.setBloodType(person.getBloodType());
-        personAtDb.setHobby(person.getHobby());
-        personAtDb.setAge(person.getAge());
+        if(!person.getName().equals(personDto.getName())) {
+            throw new RuntimeException("이름이 다릅니다.");
+        }
 
-        personRepository.save(personAtDb);
+        person.set(personDto);
+
+        /*
+        personAtDb.setName(personDto.getName());
+        personAtDb.setPhoneNumber(personDto.getPhoneNumber());
+        personAtDb.setJob(personDto.getJob());
+
+        if(personDto.getBirthday() != null) {
+            personAtDb.setBirthday(new Birthday(personDto.getBirthday()));
+        }
+        personAtDb.setAddress(personDto.getAddress());
+        personAtDb.setBloodType(personDto.getBloodType());
+        personAtDb.setHobby(personDto.getHobby());
+        personAtDb.setAge(personDto.getAge());
+*/
+        personRepository.save(person);
+    }
+
+    @Transactional
+    public void modify(Long id, String name) {
+        Person person = personRepository.findById(id).orElseThrow(()->new RuntimeException("아이디가 존재하지 않습니다."));
+
+        person.setName(name);
+        personRepository.save(person);
+    }
+
+    public void delete(Long id) {
     }
 }

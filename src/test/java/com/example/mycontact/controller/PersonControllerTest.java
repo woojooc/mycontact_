@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,7 +40,7 @@ class PersonControllerTest {
                 MockMvcRequestBuilders.post("/api/person")//RequestParam :  ?name=martin2&age=20&bloodType=A")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n"
-                            + " \"name\": \"martin2\",\n"
+                            + " \"name\": \"martin\",\n"
                                 + " \"age\":20,\n"
                                 + " \"bloodType\": \"A\"\n"
                             + "}"))
@@ -48,17 +49,28 @@ class PersonControllerTest {
     }
 
     @Test
-    void modifyPerson(Long id, Person person) throws Exception{
+    void modifyPerson() throws Exception{// Long id, Person person) throws Exception{
         mockMvc = MockMvcBuilders.standaloneSetup(personController).build();
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/person/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n"
-                        + " \"name\": \"martin2\",\n"
+                        + " \"name\": \"martin\",\n"
                         + " \"age\":20,\n"
                         + " \"bloodType\": \"A\"\n"
                         + "}"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void modifyName() throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(personController).build();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/person/1")
+                .param("name","martin11"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

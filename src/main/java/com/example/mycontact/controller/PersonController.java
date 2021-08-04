@@ -1,5 +1,6 @@
 package com.example.mycontact.controller;
 
+import com.example.mycontact.controller.dto.PersonDto;
 import com.example.mycontact.domain.Person;
 import com.example.mycontact.repository.PersonRepository;
 import com.example.mycontact.service.PersonService;
@@ -30,14 +31,27 @@ public class PersonController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)     // 200-> 201
     public void postPerson(@RequestBody Person person) {
-        log.info("person-> {}",personRepository.findAll());
+        log.info("person-> {}", personRepository.findAll());
 
         personService.put(person);
     }
 
     @PutMapping("/{id}")
-    public void modifyPerson(@PathVariable Long id, @RequestBody Person person) {
-        personService.modify(id,person);
-        log.info("person-> {}",personRepository.findAll());
+    public void modifyPerson(@PathVariable Long id, @RequestBody PersonDto personDto) {
+        personService.modify(id, personDto);
+        log.info("person-> {}", personRepository.findAll());
+    }
+
+    //일부 리소스만 업데이트
+    @PatchMapping("/{id}")
+    public void modifyPerson(@PathVariable Long id, String name) {
+        personService.modify(id, name);
+        log.info("person-> {}", personRepository.findAll());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePerson(@PathVariable Long id) {
+        personService.delete(id);
+        log.info("person-> {}", personRepository.findAll());
     }
 }
