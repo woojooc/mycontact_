@@ -31,27 +31,45 @@ public class PersonController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)     // 200-> 201
     public void postPerson(@RequestBody Person person) {
-        log.info("person-> {}", personRepository.findAll());
-
+        //log.info("person-> {}", personRepository.findAll());
         personService.put(person);
     }
 
     @PutMapping("/{id}")
     public void modifyPerson(@PathVariable Long id, @RequestBody PersonDto personDto) {
         personService.modify(id, personDto);
-        log.info("person-> {}", personRepository.findAll());
+        //log.info("person-> {}", personRepository.findAll());
     }
 
     //일부 리소스만 업데이트
     @PatchMapping("/{id}")
     public void modifyPerson(@PathVariable Long id, String name) {
         personService.modify(id, name);
-        log.info("person-> {}", personRepository.findAll());
+        //log.info("person-> {}", personRepository.findAll());
     }
 
     @DeleteMapping("/{id}")
     public void deletePerson(@PathVariable Long id) {
         personService.delete(id);
-        log.info("person-> {}", personRepository.findAll());
+        //log.info("person-> {}", personRepository.findAll());
     }
+
+    //검증 방법 1 리턴  : 실제 지웠는지 상관없이 true 리턴가능해서 부족
+//    @DeleteMapping("/{id}")
+//    public boolean deletePerson(@PathVariable Long id) {
+//        personService.delete(id);
+//        log.info("person-> {}", personRepository.findAll());
+//
+//        return true;
+//    }
+
+    //검증 방법 2  삭제된 데이터 리턴
+//    @DeleteMapping("/{id}")
+//    public boolean deletePerson(@PathVariable Long id) {
+//        personService.delete(id);
+//        log.info("person-> {}", personRepository.findAll());
+//
+//        return personRepository.findPeopleDeleted().stream().anyMatch(person -> person.getId().equals(id));
+//    }
+
 }
