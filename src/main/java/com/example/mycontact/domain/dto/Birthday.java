@@ -18,12 +18,8 @@ public class Birthday {
     //int -> Integer  : null값을 허용한다.
     private Integer yearOfBirthday;
 
-    @Min(1)
-    @Max(12)
     private Integer monthOfBirthday;
 
-    @Min(1)
-    @Max(31)
     private Integer dayOfBirthday;
 
     //LocalDate로 한번 맵핑해서 2월 30일같은거 못 넣게 만들 수 있다.
@@ -31,5 +27,9 @@ public class Birthday {
         this.yearOfBirthday = birthday.getYear();
         this.monthOfBirthday = birthday.getMonthValue();
         this.dayOfBirthday = birthday.getDayOfMonth();
+    }
+
+    public static Birthday of(LocalDate birthday) {
+        return new Birthday(birthday);
     }
 }

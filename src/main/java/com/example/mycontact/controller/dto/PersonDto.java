@@ -15,9 +15,7 @@ public class PersonDto {
 
     @NotBlank(message = "이름은 필수값입니다")
     private String name;
-    private int age;
     private String hobby;
-    private String bloodType;
     private String address;
     private LocalDate birthday;
     private String job;

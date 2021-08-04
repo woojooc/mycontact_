@@ -3,6 +3,7 @@ package com.example.mycontact.domain;
 import com.example.mycontact.controller.dto.PersonDto;
 import com.example.mycontact.domain.dto.Birthday;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -12,13 +13,9 @@ import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Entity
-//@Getter
-//@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-//@ToString//(exclude = "phoneNumber")  // 민감한 정보 로그에서 제외 시키기.
-//@EqualsAndHashCode
 @Data
 public class Person {
 
@@ -30,15 +27,6 @@ public class Person {
     @NotEmpty
     @Column(nullable = false)
     private String name;
-
-    @NonNull
-    @Min(1)
-    private int age;
-
-    @NonNull
-    @NotEmpty
-    @Column(nullable = false)
-    private String bloodType;
 
     private String hobby;
 
@@ -53,54 +41,16 @@ public class Person {
     @ToString.Exclude
     private String phoneNumber;
 
-    // 해쉬 코드  = 같은 객체라는 것을
-    // 이퀄스 = 해당 객체가 같은 값을 가지고 있다는 것을
+    @ColumnDefault("0")
+    private boolean deleted;
 
-    /*
-    // 같은 값을 가지면 동일한 객체로 판단하게 하자 but 해쉬코드는 다른 객체
-    public boolean equals(Object object) {
-        if(object == null) {
-            return false;
-        }
-
-        Person person = (Person)object;
-
-        if(!person.getName().equals(this.getName())) {
-            return false;
-        }
-
-        if(person.getAge() != this.getAge()) {
-            return false;
-        }
-
-        return true;
-    }
-    //but 해쉬코드는 다른 객체 => 해쉬 맵같은곳에서 문제가 발생한다.
-    public int hashCode() {
-        return (name+age).hashCode();
-    }
-    //해쉬 코드를 오버라이딩해서 생성하기
-    */
-
-    //차단기능
-    //private boolean block;  // getter에서 isBlock이라고 만들어줌
-
-    //optional false = 항상 필요
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)// fetch = FetchType.EAGER)//, optional = false)
-    @ToString.Exclude
-    private Block block;
 
     public void set(PersonDto personDto) {
-        if(personDto.getAge() !=0 )
-        {
-            this.setAge(personDto.getAge());
-        }
+
         if (!StringUtils.isEmpty(personDto.getHobby())) {
             this.setHobby(personDto.getHobby());
         }
-        if (!StringUtils.isEmpty(personDto.getBloodType())) {
-            this.setBloodType(personDto.getBloodType());
-        }
+
         if (!StringUtils.isEmpty(personDto.getAddress())) {
             this.setAddress(personDto.getAddress());
         }
@@ -110,5 +60,22 @@ public class Person {
         if (!StringUtils.isEmpty(personDto.getPhoneNumber())) {
             this.setPhoneNumber(personDto.getPhoneNumber());
         }
+
+        if (personDto.getBirthday() != null) {
+            this.setBirthday(Birthday.of(personDto.getBirthday()));
+        }
+    }
+    // 프리미티브 널가질수 없어,  레퍼타입으로
+    public Integer getAge() {
+        if(this.birthday != null) {
+            return LocalDate.now().getYear() - this.birthday.getYearOfBirthday() + 1;
+        } else {
+            return null;
+        }
+    }
+
+    // 1159 객체생성,  12시에 api 유통되는 경우 문제발생. 객체에서 로컬데이트 생성하는게 안전
+    public boolean isBirthdayToday() {
+        return LocalDate.now().equals(LocalDate.of(this.birthday.getYearOfBirthday(),this.birthday.getMonthOfBirthday(),this.birthday.getDayOfBirthday()));
     }
 }
