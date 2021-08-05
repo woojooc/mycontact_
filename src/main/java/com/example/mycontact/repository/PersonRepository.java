@@ -13,6 +13,10 @@ import java.util.List;
 //JpaRepository 사용시 자동으로 레퍼지토리 빈으로 등록된다.
 public interface PersonRepository extends JpaRepository<Person,Long>{
 
+    //이름은 name 이지만 전혀 다른 내용을 넣어버림.
+    //@Query(value = "select person from Person person where person.address = :name")
+    //List<Person> findByName(@Param("name") String name);
+
     List<Person> findByName(String name);
 
     //jdql 엔티티 기반 쿼리 실행     ?1 첫번째 인자를 의미

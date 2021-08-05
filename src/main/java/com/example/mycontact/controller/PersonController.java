@@ -28,11 +28,12 @@ public class PersonController {
         return personService.getPerson(id);
     }
 
+    //펄슨으로 그냥 받으면 위험 ID 나 delete같은건 사용자 입력 받는게 아님.
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)     // 200-> 201
-    public void postPerson(@RequestBody Person person) {
+    public void postPerson(@RequestBody PersonDto personDto) {
         //log.info("person-> {}", personRepository.findAll());
-        personService.put(person);
+        personService.put(personDto);
     }
 
     @PutMapping("/{id}")

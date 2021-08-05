@@ -21,10 +21,10 @@ public class PersonService {
 
     @Transactional(readOnly = true)
     public Person getPerson(Long id) {
-
-        Person person = personRepository.findById(id).orElse(null);
-        log.info("person : {}",person);
-        return person;
+        return personRepository.findById(id).orElse(null);
+        //Person person = personRepository.findById(id).orElse(null);
+        //log.info("person : {}",person);
+        //return person;
     }
 
     public List<Person> getPeopleByName(String name) {
@@ -33,7 +33,11 @@ public class PersonService {
     }
 
     @Transactional
-    public void put(Person person) {
+    public void put(PersonDto personDto) {
+        Person person = new Person();
+        person.set(personDto);
+        person.setName(personDto.getName());
+
         personRepository.save(person);
     }
 
