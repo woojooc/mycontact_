@@ -45,8 +45,9 @@ class PersonRepositoryTest {
 
         assertThat(people.size()).isEqualTo(1);
     }
+
     @Test
-    void findByMonthOfBirthday(){
+    void findByMonthOfBirthday() {
         List<Person> people = personRepository.findByMonthOfBirthday(7);
 
         assertThat(people.size()).isEqualTo(2);

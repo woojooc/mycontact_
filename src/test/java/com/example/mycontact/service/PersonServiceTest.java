@@ -3,6 +3,8 @@ package com.example.mycontact.service;
 import com.example.mycontact.controller.dto.PersonDto;
 import com.example.mycontact.domain.Person;
 import com.example.mycontact.domain.dto.Birthday;
+import com.example.mycontact.exception.PersonNotFoundException;
+import com.example.mycontact.exception.RenameNotPermittedException;
 import com.example.mycontact.repository.PersonRepository;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
@@ -77,8 +80,8 @@ class PersonServiceTest {
 
     @Test
     void put() {
-        PersonDto dto = PersonDto
-                .of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
+        //PersonDto dto = PersonDto
+        //        .of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
         // mock에대한 액션을 지정해주지 않음.
         // erturn값이 없거나 하면 따로 지정해줄 필요없음
         // 펄슨 레퍼지토리가 정말 호출되었는지 알 길이 없음.
@@ -92,12 +95,99 @@ class PersonServiceTest {
         verify(personRepository, times(1)).save(argThat(new IsPersonWillBeInserted()));
     }
 
+    @Test
+    void modifyIfPersonNotFound() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.empty());
 
+        //personService.modify(1L,mockPersonDto());
 
+        //assertThrows(RuntimeException.class, () -> personService.modify(1L, mockPersonDto()));
+        assertThrows(PersonNotFoundException.class, () -> personService.modify(1L, mockPersonDto()));
+    }
+
+    @Test
+    void modifyIfNameIsDifferent() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.of(new Person("tony")));
+
+        //assertThrows(RuntimeException.class, () -> personService.modify(1L, mockPersonDto()));
+        assertThrows(RenameNotPermittedException.class, () -> personService.modify(1L, mockPersonDto()));
+    }
+
+    @Test
+    void modify() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.of(new Person("martin")));
+
+        personService.modify(1L, mockPersonDto());
+
+        //verify(personRepository, times(1)).save(any(Person.class));
+        verify(personRepository, times(1)).save(argThat(new IsPersonWillBeUpdate()));
+    }
+
+    @Test
+    void modifyByNameIfPersonNotFound() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        //assertThrows(RuntimeException.class, () -> personService.modify(1L, "daniel"));
+        assertThrows(PersonNotFoundException.class, () -> personService.modify(1L, "daniel"));
+    }
+
+    @Test
+    void modifyByName() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.of(new Person("martin")));
+
+        personService.modify(1L, "daniel");
+
+        verify(personRepository, times(1)).save(argThat(new IsNameWillBeUpdated()));
+    }
+
+    @Test
+    void deleteIfPersonNotFound() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        //assertThrows(RuntimeException.class, () -> personService.delete(1L));
+        assertThrows(PersonNotFoundException.class, () -> personService.delete(1L));
+    }
+
+    @Test
+    void delete() {
+        when(personRepository.findById(1L))
+                .thenReturn(Optional.of(new Person("martin")));
+
+        personService.delete(1L);
+
+        verify(personRepository, times(1)).save(argThat(new IsPersonWillBeDeleted()));
+
+    }
+
+    //Persondto 생성하는애
     private PersonDto mockPersonDto() {
         return PersonDto
                 .of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
     }
+
+    private static class IsPersonWillBeUpdate implements ArgumentMatcher<Person> {
+
+        @Override
+        public boolean matches(Person person) {
+            return equals(person.getName(), "martin")
+                    && equals(person.getHobby(), "programming")
+                    && equals(person.getAddress(), "판교")
+                    && equals(person.getBirthday(), Birthday.of(LocalDate.now()))
+                    && equals(person.getJob(), "programmer")
+                    && equals(person.getPhoneNumber(), "010-1111-2222");
+        }
+
+        private boolean equals(Object actual, Object expected) {
+            return expected.equals(actual);
+        }
+    }
+
     private static class IsPersonWillBeInserted implements ArgumentMatcher<Person> {
 
         @Override
@@ -112,6 +202,22 @@ class PersonServiceTest {
 
         private boolean equals(Object actual, Object expected) {
             return expected.equals(actual);
+        }
+    }
+
+    private static class IsNameWillBeUpdated implements ArgumentMatcher<Person> {
+
+        @Override
+        public boolean matches(Person person) {
+            return person.getName().equals("daniel");
+        }
+    }
+
+    private static class IsPersonWillBeDeleted implements ArgumentMatcher<Person> {
+
+        @Override
+        public boolean matches(Person person) {
+            return person.isDeleted();
         }
     }
 }

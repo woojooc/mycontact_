@@ -1,10 +1,10 @@
 package com.example.mycontact.controller;
 
+import com.example.mycontact.exception.dto.ErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 //@Controller
 //@ResponseBody
@@ -23,4 +23,11 @@ public class HelloWorldController {
         return "HelloWorld";
     }
     */
+
+    // 항상 오류를 발생시키는 api
+    @GetMapping(value = "/api/helloException")
+    public String helloException(){
+        throw new RuntimeException("Hello RuntimeException");
+    }
+
 }
