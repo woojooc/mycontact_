@@ -13,7 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -86,5 +87,19 @@ public class PersonService {
     */
     public Page<Person> getAll(Pageable pageable) {
         return personRepository.findAll(pageable);
+    }
+
+    public List<Person> getBirthdayFriends() {
+
+        List<Person> people1 = personRepository.findByMonthOfBirthdayAndDayOfBirthday(LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
+        List<Person> people2 = personRepository.findByMonthOfBirthdayAndDayOfBirthday(LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth()+1);
+
+        List<Person> birthdayPeople = new ArrayList<>();
+        birthdayPeople.addAll(people1);
+        birthdayPeople.addAll(people2);
+
+        log.info("birthday person : {}",birthdayPeople);
+
+        return birthdayPeople;
     }
 }

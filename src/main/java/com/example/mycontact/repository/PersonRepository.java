@@ -23,6 +23,9 @@ public interface PersonRepository extends JpaRepository<Person,Long>{
     @Query(value = "select person from Person person where person.birthday.monthOfBirthday = ?1")
     List<Person> findByMonthOfBirthday(int monthOfBirthday);
 
+    @Query(value = "select person from Person person where person.birthday.dayOfBirthday = ?1")
+    List<Person> findByDayOfBirthday(int dayOfBirthday);
+
     @Query(value = "select person from Person person where person.birthday.monthOfBirthday = :monthOfBirthday and person.birthday.dayOfBirthday = :dayOfBirthday")
     List<Person> findByMonthOfBirthdayAndDayOfBirthday(@Param("monthOfBirthday")int monthOfBirthday, @Param("dayOfBirthday")int dayOfBirthday);
 

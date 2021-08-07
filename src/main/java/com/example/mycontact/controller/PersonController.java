@@ -31,6 +31,9 @@ public class PersonController {
     @Autowired
     PersonRepository personRepository;
 
+    @GetMapping("/birthday-friends")
+    public List<Person> getBirthdayFriends() { return personService.getBirthdayFriends();}
+
     //@GetMapping
     //public List<Person> getAll(){return personService.getAll();}
 
