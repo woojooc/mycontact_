@@ -4,6 +4,7 @@ import com.example.mycontact.controller.dto.PersonDto;
 import com.example.mycontact.domain.dto.Birthday;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data
+@Where(clause = "deleted = false")
 public class Person {
 
     @Id

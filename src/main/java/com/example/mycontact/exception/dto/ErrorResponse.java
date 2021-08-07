@@ -18,7 +18,7 @@ public class ErrorResponse {
     public static ErrorResponse of(HttpStatus httpStatus, String message) {
         return new ErrorResponse(httpStatus.value(), message);
     }
-    /*
+
     public static ErrorResponse of(HttpStatus httpStatus, FieldError fieldError){
         if(fieldError == null){
             return new ErrorResponse(httpStatus.value(), "invalid params");
@@ -26,5 +26,4 @@ public class ErrorResponse {
             return new ErrorResponse(httpStatus.value(), fieldError.getDefaultMessage());
         }
     }
-    */
 }
